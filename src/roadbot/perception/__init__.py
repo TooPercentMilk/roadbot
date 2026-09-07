@@ -1,0 +1,2 @@
+"""Camera-based environment perception."""
+

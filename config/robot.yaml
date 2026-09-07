@@ -1,0 +1,41 @@
+robot:
+  wheelbase_m: null
+  track_width_m: null
+  wheel_radius_m: null
+
+camera:
+  resolution: [640, 480]
+  format: RGB888
+  fps: 30
+  horizontal_flip: false
+  vertical_flip: false
+  calibration_file: calibration/camera.yaml
+
+imu:
+  bus: 1
+  accelerometer_address: 0x19
+  gyroscope_address: 0x69
+  sample_rate_hz: 100
+  calibration_file: calibration/imu.yaml
+  axis_mapping: null
+
+motor_controller:
+  bus: 1
+  address: 0x34
+  left_channel: 1
+  right_channel: 3
+  encoder_polarity: null
+
+steering:
+  gpio_bcm: 12
+  frequency_hz: 50
+  neutral_pulse_us: 1500
+  minimum_pulse_us: null
+  maximum_pulse_us: null
+  calibration_file: calibration/steering.yaml
+
+safety:
+  command_timeout_ms: 250
+  maximum_speed_mps: null
+  maximum_steering_rad: null
+

@@ -1,0 +1,3 @@
+# IMU bias, scale, and axis alignment will be recorded here.
+calibrated: false
+

@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+
+# Generated robot data and model artifacts
+data/recordings/*
+!data/recordings/.gitkeep
+models/training/*
+!models/training/.gitkeep
+models/deployment/*
+!models/deployment/.gitkeep
+
