@@ -12,6 +12,7 @@ remain compatible with libcamera. Create the project virtual environment with
 access to system packages:
 
 ```bash
+sudo apt install -y python3-picamera2 python3-opencv
 python3 -m venv --system-site-packages .venv
 source .venv/bin/activate
 python -m pip install -e '.[hardware,dev]'
@@ -26,10 +27,20 @@ pipeline with valid messages and adequate sample rates:
 python tools/check_sensor_pipeline.py --duration 10
 ```
 
-The check runs both inputs concurrently and fails on device/read errors, stale
-or non-monotonic messages, incorrect camera dimensions, non-finite IMU values,
-or an observed rate below 70% of the rate in `config/robot.yaml`. Use
-`--minimum-rate-ratio` to choose a different threshold.
+The check displays the live camera feed with timestamped accelerometer and
+gyroscope X/Y/Z values overlaid, and prints timestamped IMU samples to the
+terminal at 10 Hz. Press Q or Esc in the video window to stop early. Run until
+stopped manually with:
+
+```bash
+python tools/check_sensor_pipeline.py --continuous
+```
+
+For a headless SSH session, use `--no-display`; change terminal output frequency
+with `--imu-output-rate HZ`. The check runs both inputs concurrently and fails
+on device/read errors, stale or non-monotonic messages, incorrect camera
+dimensions, non-finite IMU values, or an observed rate below 70% of the rate in
+`config/robot.yaml`.
 
 ## Encoder diagnostic
 
