@@ -1,34 +1,67 @@
-# Generated and incrementally updated by tools/calibrate_*.py.
 version: 1
 sensor_model: BMI088
-calibrated: false
+calibrated: true
 accelerometer:
-  calibrated: false
-  bias: [0.0, 0.0, 0.0]
+  calibrated: true
+  bias:
+  - -0.1765207474632223
+  - 0.1451679285354623
+  - 0.06695946083641419
   correction_matrix:
-    - [1.0, 0.0, 0.0]
-    - [0.0, 1.0, 0.0]
-    - [0.0, 0.0, 1.0]
-  reference_temperature_c: null
-  bias_temperature_coefficient_mps2_per_c: [0.0, 0.0, 0.0]
+  - - 1.0069988793355202
+    - 0.002099277660816669
+    - -0.006728085018088466
+  - - -0.008470168253135912
+    - 1.0087908172129387
+    - 0.005450302879947427
+  - - -0.007583224143094554
+    - -0.0017771280837369596
+    - 1.0077122237061462
+  reference_temperature_c: 20.165416666666665
+  bias_temperature_coefficient_mps2_per_c:
+  - 0.0
+  - 0.0
+  - 0.0
 gyroscope:
-  calibrated: false
-  bias: [0.0, 0.0, 0.0]
+  calibrated: true
+  bias:
+  - 0.0037164413012055714
+  - -0.0028269454971191106
+  - 0.003212371485880824
   correction_matrix:
-    - [1.0, 0.0, 0.0]
-    - [0.0, 1.0, 0.0]
-    - [0.0, 0.0, 1.0]
-  reference_temperature_c: null
-  bias_temperature_coefficient_rad_s_per_c: [0.0, 0.0, 0.0]
+  - - 1.0
+    - 0.0
+    - 0.0
+  - - 0.0
+    - 1.0
+    - 0.0
+  - - 0.0
+    - 0.0
+    - 1.0
+  reference_temperature_c: 19.2315
+  bias_temperature_coefficient_rad_s_per_c:
+  - 0.0
+  - 0.0
+  - 0.0
 temperature:
   calibrated: false
 frame:
-  calibrated: false
+  calibrated: true
   source: imu_link
   target: base_link
   rotation_matrix:
-    - [1.0, 0.0, 0.0]
-    - [0.0, 1.0, 0.0]
-    - [0.0, 0.0, 1.0]
+  - - 1.0
+    - 0.0
+    - 0.0
+  - - 0.0
+    - 1.0
+    - 0.0
+  - - 0.0
+    - 0.0
+    - 1.0
 noise: {}
-metadata: {}
+metadata:
+  last_updated_utc: '2026-09-20T23:50:21+00:00'
+  last_operation: frame_mapping
+  accelerometer_fit_rms_mps2: 0.047789696993182106
+  accelerometer_fit_maximum_mps2: 0.061949313367793774
