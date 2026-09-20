@@ -60,3 +60,67 @@ in `config/robot.yaml`. To save the samples:
 python tools/check_encoders.py --duration 15 --expect-motion \
   --output data/recordings/encoder_check.csv
 ```
+
+## IMU calibration
+
+The BMI088 driver uses a +/-250 degree/second gyroscope range. Perform IMU
+calibration after the sensor and its PCB are permanently mounted. All commands
+below update `calibration/imu.yaml` incrementally and leave the other completed
+sections intact.
+
+First record the stationary gyroscope bias on a rigid, vibration-free surface:
+
+```bash
+python tools/calibrate_gyro_bias.py --duration 20 --warmup 10 \
+  --raw-output data/recordings/imu_gyro_bias.csv
+```
+
+Next run the guided six-position accelerometer calibration. Each instruction
+refers to the axes printed on the sensor board. Secure the entire assembled
+robot in every pose; do not calibrate the loose sensor separately.
+
+```bash
+python tools/calibrate_accelerometer.py --duration-per-pose 8 \
+  --raw-output-dir data/recordings/imu_accelerometer
+```
+
+Configure the fixed sensor-to-robot rotation. The mapping lists robot body
+X-forward, Y-left, Z-up as signed sensor axes. An aligned installation uses the
+identity example below. A board whose sensor X is forward, Y is right, and Z is
+down uses `--mapping=+x,-y,-z`.
+
+```bash
+python tools/configure_imu_frame.py --mapping=+x,+y,+z
+```
+
+For temperature calibration, cold-soak the powered-off robot, then power it on
+and run the command promptly. Leave it stationary while it warms naturally.
+The command requires at least a 4 C change by default; a controlled temperature
+chamber covering the expected operating range produces a better result.
+
+```bash
+python tools/calibrate_imu_temperature.py --duration 900 \
+  --raw-output data/recordings/imu_temperature.csv
+```
+
+Finally, let the robot reach thermal equilibrium and characterize noise. Thirty
+minutes is a useful minimum; several hours gives a more informative Allan
+deviation curve.
+
+```bash
+python tools/characterize_imu_noise.py --warmup 60 --duration 1800 \
+  --raw-output data/recordings/imu_noise.csv \
+  --allan-output data/recordings/imu_allan.csv
+```
+
+The noise command writes calibrated body-frame covariance and Allan summary
+values to `calibration/imu.yaml`. It writes the complete curve to the requested
+CSV. Calibration commands reject visibly moving or poor-quality datasets rather
+than overwriting a good calibration; `--force` is available for deliberate
+experiments.
+
+`Bmi088Imu` continues to publish SI-unit data in `imu_link`, which keeps raw
+diagnostics available. Runtime consumers should wrap it with `CalibratedImu`;
+that layer applies temperature, bias, scale/cross-axis, and sensor-to-body
+rotation corrections and publishes the result in `base_link`. Gravity removal
+and online residual-bias estimation remain localization responsibilities.

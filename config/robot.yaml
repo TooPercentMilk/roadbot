@@ -17,7 +17,6 @@ imu:
   gyroscope_address: 0x69
   sample_rate_hz: 100
   calibration_file: calibration/imu.yaml
-  axis_mapping: null
 
 motor_controller:
   bus: 1
@@ -38,4 +37,3 @@ safety:
   command_timeout_ms: 250
   maximum_speed_mps: null
   maximum_steering_rad: null
-

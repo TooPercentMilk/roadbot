@@ -19,6 +19,7 @@ class ImuSample:
     acceleration_mps2: Vector3
     angular_velocity_rad_s: Vector3
     temperature_c: float | None = None
+    frame_id: str = "imu_link"
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,4 +29,3 @@ class WheelEncoderSample:
     right_count: int
     left_rad_s: float
     right_rad_s: float
-

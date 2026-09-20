@@ -9,6 +9,8 @@ from roadbot.sensors.imu import (
     ACCEL_TEMP_REGISTER,
     GYRO_CHIP_ID,
     GYRO_DATA_REGISTER,
+    GYRO_RANGE_REGISTER,
+    GYRO_RANGE_REGISTER_VALUE,
     Bmi088Imu,
 )
 
@@ -32,7 +34,7 @@ class FakeBus:
             # x=0, y=0, z=16384: half of the configured +/-6 g range.
             return bytes.fromhex("000000000040")
         if address == 0x69 and register == GYRO_DATA_REGISTER:
-            # x=16384, y=0, z=0: half of the configured +/-2000 dps range.
+            # x=16384, y=0, z=0: half of the configured +/-250 dps range.
             return bytes.fromhex("004000000000")
         if address == 0x19 and register == ACCEL_TEMP_REGISTER:
             return bytes((0, 0))
@@ -52,9 +54,10 @@ def test_imu_initializes_and_converts_samples_to_si_units(monkeypatch) -> None:
     imu.close()
 
     assert len(bus.writes) == 7
+    assert (0x69, GYRO_RANGE_REGISTER, GYRO_RANGE_REGISTER_VALUE) in bus.writes
     assert not bus.closed  # The caller retains ownership of an injected bus.
     assert sample.header.timestamp_ns == 456
     assert sample.header.sequence == 0
     assert sample.acceleration_mps2.z == pytest.approx(3.0 * 9.80665)
-    assert sample.angular_velocity_rad_s.x == pytest.approx(math.radians(1000.0))
+    assert sample.angular_velocity_rad_s.x == pytest.approx(math.radians(125.0))
     assert sample.temperature_c == 23.0

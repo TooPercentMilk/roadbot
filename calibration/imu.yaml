@@ -1,3 +1,34 @@
-# IMU bias, scale, and axis alignment will be recorded here.
+# Generated and incrementally updated by tools/calibrate_*.py.
+version: 1
+sensor_model: BMI088
 calibrated: false
-
+accelerometer:
+  calibrated: false
+  bias: [0.0, 0.0, 0.0]
+  correction_matrix:
+    - [1.0, 0.0, 0.0]
+    - [0.0, 1.0, 0.0]
+    - [0.0, 0.0, 1.0]
+  reference_temperature_c: null
+  bias_temperature_coefficient_mps2_per_c: [0.0, 0.0, 0.0]
+gyroscope:
+  calibrated: false
+  bias: [0.0, 0.0, 0.0]
+  correction_matrix:
+    - [1.0, 0.0, 0.0]
+    - [0.0, 1.0, 0.0]
+    - [0.0, 0.0, 1.0]
+  reference_temperature_c: null
+  bias_temperature_coefficient_rad_s_per_c: [0.0, 0.0, 0.0]
+temperature:
+  calibrated: false
+frame:
+  calibrated: false
+  source: imu_link
+  target: base_link
+  rotation_matrix:
+    - [1.0, 0.0, 0.0]
+    - [0.0, 1.0, 0.0]
+    - [0.0, 0.0, 1.0]
+noise: {}
+metadata: {}

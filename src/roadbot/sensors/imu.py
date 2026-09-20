@@ -29,7 +29,8 @@ GYRO_POWER_REGISTER = 0x11
 
 STANDARD_GRAVITY_MPS2 = 9.80665
 ACCEL_RANGE_G = 6.0
-GYRO_RANGE_DPS = 2000.0
+GYRO_RANGE_DPS = 250.0
+GYRO_RANGE_REGISTER_VALUE = 0x03
 ACCEL_ODR_VALUES = {
     100.0: 0x08,
     200.0: 0x09,
@@ -137,9 +138,13 @@ class Bmi088Imu:
             )
             self._bus.write_byte_data(self.accelerometer_address, ACCEL_RANGE_REGISTER, 0x01)
 
-            # Gyroscope: normal mode, configured ODR/bandwidth, +/-2000 deg/s.
+            # Gyroscope: normal mode, configured ODR/bandwidth, +/-250 deg/s.
             self._bus.write_byte_data(self.gyroscope_address, GYRO_POWER_REGISTER, 0x00)
-            self._bus.write_byte_data(self.gyroscope_address, GYRO_RANGE_REGISTER, 0x00)
+            self._bus.write_byte_data(
+                self.gyroscope_address,
+                GYRO_RANGE_REGISTER,
+                GYRO_RANGE_REGISTER_VALUE,
+            )
             self._bus.write_byte_data(
                 self.gyroscope_address,
                 GYRO_BANDWIDTH_REGISTER,
