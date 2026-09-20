@@ -17,8 +17,19 @@ source .venv/bin/activate
 python -m pip install -e '.[hardware,dev]'
 ```
 
-Most hardware scripts in `tools/` are placeholders until the individual drivers
-are implemented and wiring has been verified.
+## Camera and IMU pipeline check
+
+With the camera and BMI088 connected, verify that both feeds reach the runtime
+pipeline with valid messages and adequate sample rates:
+
+```bash
+python tools/check_sensor_pipeline.py --duration 10
+```
+
+The check runs both inputs concurrently and fails on device/read errors, stale
+or non-monotonic messages, incorrect camera dimensions, non-finite IMU values,
+or an observed rate below 70% of the rate in `config/robot.yaml`. Use
+`--minimum-rate-ratio` to choose a different threshold.
 
 ## Encoder diagnostic
 

@@ -17,3 +17,5 @@ models/training/*
 models/deployment/*
 !models/deployment/.gitkeep
 
+#secrets
+pi-login.txt
