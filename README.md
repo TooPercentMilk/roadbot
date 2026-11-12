@@ -42,6 +42,20 @@ on device/read errors, stale or non-monotonic messages, incorrect camera
 dimensions, non-finite IMU values, or an observed rate below 70% of the rate in
 `config/robot.yaml`.
 
+## Shared I2C communication check
+
+After connecting the BMI088 IMU and Hiwonder motor controller to the same SDA
+and SCL lines, probe all three configured I2C endpoints:
+
+```bash
+python tools/check_i2c.py
+```
+
+The check reads the BMI088 accelerometer and gyroscope chip IDs at `0x19` and
+`0x69`, then reads encoder telemetry from the motor controller at `0x34`. It
+does not send motor speed, direction, PWM, or IMU configuration commands. A
+successful run prints one PASS line per address and a final all-devices PASS.
+
 ## Encoder diagnostic
 
 The encoder diagnostic is read-only: it never commands the motors. On the Pi,
