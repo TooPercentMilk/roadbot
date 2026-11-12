@@ -19,3 +19,7 @@ models/deployment/*
 
 #secrets
 pi-login.txt
+
+# misc
+notes.txt
+shopping_list.csv
