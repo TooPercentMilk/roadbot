@@ -23,7 +23,8 @@ motor_controller:
   address: 0x34
   left_channel: 1
   right_channel: 3
-  encoder_polarity: null
+  motor_type: 3
+  encoder_polarity: 0
 
 steering:
   gpio_bcm: 12

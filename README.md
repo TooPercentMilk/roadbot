@@ -75,6 +75,23 @@ python tools/check_encoders.py --duration 15 --expect-motion \
   --output data/recordings/encoder_check.csv
 ```
 
+## Drive-motor bench test
+
+This test intentionally moves the rear drive wheels. Raise both driven wheels
+completely off the ground, clear hands and loose items from the drivetrain, and
+keep the motor-power switch within reach. Then run:
+
+```bash
+python tools/check_motors.py --enable-motors
+```
+
+The command configures the documented JGB encoder mode, then exercises M1 and
+M3 individually at a low closed-loop target in both directions. It stops all
+four channels between steps and on Ctrl+C or an error. The test passes only if
+both motors move in both directions, their encoder counts change and reverse
+sign, and the final stop command succeeds. For the first run, keep the default
+speed and one-second duration.
+
 ## IMU calibration
 
 The BMI088 driver uses a +/-250 degree/second gyroscope range. Perform IMU

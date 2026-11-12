@@ -10,6 +10,8 @@ class I2CBus(Protocol):
 
     def write_byte_data(self, address: int, register: int, value: int) -> None: ...
 
+    def write_block_data(self, address: int, register: int, data: bytes) -> None: ...
+
     def write_then_read(self, address: int, write: bytes, read_length: int) -> bytes: ...
 
     def close(self) -> None: ...
@@ -28,6 +30,9 @@ class SMBus2Bus:
 
     def write_byte_data(self, address: int, register: int, value: int) -> None:
         self._bus.write_byte_data(address, register, value)
+
+    def write_block_data(self, address: int, register: int, data: bytes) -> None:
+        self._bus.write_i2c_block_data(address, register, list(data))
 
     def write_then_read(self, address: int, write: bytes, read_length: int) -> bytes:
         from smbus2 import i2c_msg
