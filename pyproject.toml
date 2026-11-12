@@ -15,7 +15,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-hardware = ["smbus2>=0.4"]
+hardware = [
+    "gpiozero>=2.0",
+    "smbus2>=0.4",
+]
 training = ["torch>=2.0"]
 deployment = ["onnxruntime>=1.17"]
 dev = [

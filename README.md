@@ -12,7 +12,7 @@ remain compatible with libcamera. Create the project virtual environment with
 access to system packages:
 
 ```bash
-sudo apt install -y python3-picamera2 python3-opencv
+sudo apt install -y python3-picamera2 python3-opencv python3-gpiozero python3-lgpio
 python3 -m venv --system-site-packages .venv
 source .venv/bin/activate
 python -m pip install -e '.[hardware,dev]'
@@ -91,6 +91,25 @@ four channels between steps and on Ctrl+C or an error. The test passes only if
 both motors move in both directions, their encoder counts change and reverse
 sign, and the final stop command succeeds. For the first run, keep the default
 speed and one-second duration.
+
+## Steering bench test
+
+This interactive test intentionally moves the front steering linkage. Raise
+the front wheels, stop the drive motors, keep hands clear, and power the servo
+from its rated external supply with a common ground to the Pi. Do not power the
+servo from a GPIO signal pin. Run:
+
+```bash
+python tools/check_steering.py --enable-steering
+```
+
+The test commands the configured 1500 us center, then conservative 1250 us
+left and 1750 us right positions. It returns to center after every movement
+and asks you to confirm the observed position because the servo provides no
+position feedback. On exit it centers the linkage and disables PWM. Stop and
+switch off servo power if you hear continuous buzzing or see mechanical
+binding. The larger documented 1000/2000 us steering positions should wait
+until the safe endpoints are calibrated.
 
 ## IMU calibration
 
