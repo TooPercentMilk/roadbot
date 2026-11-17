@@ -8,6 +8,32 @@ streams by timestamp and prepares fixed-shape inputs for YOLO26.
 
 ## Perception intake and YOLO26 preparation
 
+Pretrained YOLO26n PyTorch inference is available with:
+
+```bash
+python tools/detect_objects.py --duration 10
+```
+
+The runner loads `models/deployment/yolo26n.pt` once, warms up the CPU predictor,
+then runs detection on synchronized frames. It emits JSON records containing
+camera timestamps, class names, confidence, original-image boxes, inference time,
+and a stale-result flag. All pretrained COCO classes are enabled. Stale results
+are diagnostic output and must not be used for control.
+
+Test real model execution without the Pi with
+`python tools/detect_objects.py --synthetic --duration 0.1`. Synthetic images are
+blank color fields, so empty detections are expected. Use `--device` to select
+another installed PyTorch device or `--confidence` to change the threshold.
+Install dependencies with `python -m pip install -e '.[yolo,dev]'`. On a new
+machine, download the official pretrained weights once with:
+
+```bash
+python -c "from ultralytics import YOLO; YOLO('models/deployment/yolo26n.pt')"
+```
+
+Weights are intentionally excluded from Git. This uses the `.pt` runtime;
+no export or retraining is needed.
+
 Run the complete intake on the Pi without model weights or detection targets:
 
 ```bash
