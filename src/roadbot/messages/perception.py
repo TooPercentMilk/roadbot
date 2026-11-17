@@ -20,3 +20,17 @@ class LaneEstimate:
     heading_error_rad: float
     confidence: float
 
+
+@dataclass(frozen=True, slots=True)
+class ObjectDetection:
+    class_id: int
+    label: str
+    confidence: float
+    xyxy: tuple[float, float, float, float]  # original camera pixels
+
+
+@dataclass(frozen=True, slots=True)
+class ObjectDetections:
+    header: MessageHeader  # retains camera acquisition stamp and sequence
+    frame_id: str
+    detections: tuple[ObjectDetection, ...]

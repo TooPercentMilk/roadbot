@@ -21,6 +21,9 @@ hardware = [
 ]
 training = ["torch>=2.0"]
 deployment = ["onnxruntime>=1.17"]
+# Pi users should retain the OS OpenCV package instead of installing this extra.
+perception = ["opencv-python-headless>=4.8"]
+yolo = ["ultralytics>=8.4"]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=5.0",

@@ -164,6 +164,7 @@ class Bmi088Imu:
     def read(self) -> ImuSample:
         if not self._open:
             raise ImuError("IMU is not open")
+        started_ns = self._clock()
         try:
             acceleration = _decode_xyz(
                 self._read(self.accelerometer_address, ACCEL_DATA_REGISTER, 6),
@@ -179,11 +180,15 @@ class Bmi088Imu:
         except OSError as error:
             raise ImuError(f"unable to read BMI088: {error}") from error
 
+        received_ns = self._clock()
         sample = ImuSample(
             header=MessageHeader(
-                timestamp_ns=self._clock(),
+                timestamp_ns=(started_ns + received_ns) // 2,
                 sequence=self._sequence,
                 source="imu",
+                timestamp_source="host_read_midpoint",
+                received_timestamp_ns=received_ns,
+                timestamp_uncertainty_ns=(received_ns - started_ns + 1) // 2,
             ),
             acceleration_mps2=acceleration,
             angular_velocity_rad_s=angular_velocity,

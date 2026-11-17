@@ -11,6 +11,8 @@ class CameraFrame:
     header: MessageHeader
     image: Any
     metadata: dict[str, Any]
+    encoding: str = "bgr8"
+    frame_id: str = "camera_optical_frame"
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,5 +29,6 @@ class WheelEncoderSample:
     header: MessageHeader
     left_count: int
     right_count: int
-    left_rad_s: float
-    right_rad_s: float
+    left_rad_s: float | None = None
+    right_rad_s: float | None = None
+    frame_id: str = "base_link"

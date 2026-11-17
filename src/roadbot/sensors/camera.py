@@ -10,7 +10,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from roadbot.clock import now_ns
+import numpy as np
+
+from roadbot.clock import boottime_ns, map_sensor_timestamp, now_ns
 from roadbot.messages.common import MessageHeader
 from roadbot.messages.sensors import CameraFrame
 
@@ -32,6 +34,8 @@ class Picamera2Camera:
         vertical_flip: bool = False,
         camera_factory: Callable[[], Any] | None = None,
         clock: Callable[[], int] = now_ns,
+        sensor_clock: Callable[[], int] = boottime_ns,
+        frame_id: str = "camera_optical_frame",
     ) -> None:
         if any(value <= 0 for value in resolution):
             raise ValueError("camera resolution must be positive")
@@ -44,6 +48,8 @@ class Picamera2Camera:
         self.vertical_flip = vertical_flip
         self._camera_factory = camera_factory
         self._clock = clock
+        self._sensor_clock = sensor_clock
+        self.frame_id = frame_id
         self._camera: Any | None = None
         self._sequence = 0
 
@@ -73,6 +79,7 @@ class Picamera2Camera:
                 controls={"FrameRate": self.fps},
                 transform=transform,
                 buffer_count=4,
+                queue=False,
             )
             camera.configure(configuration)
             camera.start()
@@ -94,8 +101,10 @@ class Picamera2Camera:
         try:
             # The pixels and metadata must come from the same completed request.
             request = self._camera.capture_request()
-            image = request.make_array("main")
+            # Own the pixels before releasing the request back to libcamera.
+            image = np.array(request.make_array("main"), copy=True)
             metadata = dict(request.get_metadata())
+            received_ns = self._clock()
         except (OSError, RuntimeError, ValueError) as error:
             raise CameraError(f"unable to capture camera frame: {error}") from error
         finally:
@@ -103,19 +112,33 @@ class Picamera2Camera:
                 request.release()
 
         sensor_timestamp = metadata.get("SensorTimestamp")
-        timestamp_ns = (
-            int(sensor_timestamp)
-            if isinstance(sensor_timestamp, (int, float)) and sensor_timestamp > 0
-            else self._clock()
-        )
+        timestamp_ns = received_ns
+        timestamp_source = "host_receive"
+        uncertainty_ns = None
+        if isinstance(sensor_timestamp, int) and sensor_timestamp > 0:
+            timestamp_ns, uncertainty_ns = map_sensor_timestamp(
+                sensor_timestamp, sensor_clock=self._sensor_clock, clock=self._clock
+            )
+            timestamp_source = "sensor_boottime"
         frame = CameraFrame(
             header=MessageHeader(
                 timestamp_ns=timestamp_ns,
                 sequence=self._sequence,
                 source="camera",
+                timestamp_source=timestamp_source,
+                received_timestamp_ns=received_ns,
+                timestamp_uncertainty_ns=uncertainty_ns,
             ),
             image=image,
             metadata=metadata,
+            # libcamera packed format names differ from byte order on the Pi.
+            encoding={
+                "RGB888": "bgr8",
+                "BGR888": "rgb8",
+                "XRGB8888": "bgra8",
+                "XBGR8888": "rgba8",
+            }.get(self.pixel_format, self.pixel_format),
+            frame_id=self.frame_id,
         )
         self._sequence += 1
         return frame

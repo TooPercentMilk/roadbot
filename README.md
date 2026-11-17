@@ -2,8 +2,37 @@
 
 Python software for a Raspberry Pi 5 autonomous Ackermann-steering robot.
 
-The first milestone is hardware bring-up: verify the camera, BMI088 IMU, I2C bus,
-and chassis encoder telemetry independently before adding perception or control.
+Hardware diagnostics verify the camera, BMI088 IMU, I2C bus, and chassis encoder
+telemetry independently. The perception intake now associates all three sensor
+streams by timestamp and prepares fixed-shape inputs for YOLO26.
+
+## Perception intake and YOLO26 preparation
+
+Run the complete intake on the Pi without model weights or detection targets:
+
+```bash
+python tools/check_perception_pipeline.py --duration 10
+```
+
+This reads the camera, IMU, and encoders concurrently, associates measurements
+with each camera acquisition timestamp, and reports synchronized frame counts,
+timestamp offsets, and rejected/dropped data. It does not command the motors.
+Incomplete IMU calibration leaves samples explicitly in `imu_link`; encoder
+angular speeds remain unknown until counts per wheel revolution is configured.
+
+For a hardware-free smoke test on a development machine:
+
+```bash
+python -m pip install -e '.[perception,dev]'
+python tools/check_perception_pipeline.py --synthetic --duration 2
+```
+
+The output is a contiguous RGB float32 tensor shaped `[1, 3, 640, 640]`, with
+letterboxing and normalization, accompanied by original sensor messages and an
+inverse image transform. Settings live under `perception` in `config/robot.yaml`.
+No weights or target classes are selected automatically. See
+[the perception architecture and integration guide](docs/perception.md) for
+clock semantics, queue policies, YOLO26/ONNX integration, and hardware checks.
 
 ## Raspberry Pi environment
 

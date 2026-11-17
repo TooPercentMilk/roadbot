@@ -10,6 +10,7 @@ camera:
   horizontal_flip: false
   vertical_flip: false
   calibration_file: calibration/camera.yaml
+  frame_id: camera_optical_frame
 
 imu:
   bus: 1
@@ -25,6 +26,29 @@ motor_controller:
   right_channel: 3
   motor_type: 3
   encoder_polarity: 0
+
+encoders:
+  sample_rate_hz: 50
+  # Measured controller counts per wheel revolution, including gearbox.
+  # Null preserves raw counts and leaves angular speeds unknown.
+  counts_per_revolution: null
+
+perception:
+  synchronization:
+    clock_domain: monotonic
+    imu_tolerance_ms: 15
+    encoder_tolerance_ms: 30
+    max_wait_ms: 60
+    max_age_ms: 250
+    camera_buffer_size: 3
+    imu_buffer_size: 256
+    encoder_buffer_size: 128
+    require_camera_sensor_timestamp: true
+  preprocessing:
+    input_size: [640, 640]  # height, width; fixed shape for export backends
+    stride: 32
+    scale_up: true
+    padding_value: 114
 
 steering:
   gpio_bcm: 12
